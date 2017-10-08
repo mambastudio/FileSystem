@@ -7,7 +7,6 @@ package fileobject;
 
 import filesystem.core.FileObject;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  *
