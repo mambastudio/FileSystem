@@ -15,6 +15,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -78,6 +79,18 @@ public class FileObject
         return path.getFileSystem();
     }
     
+    public boolean deleteOnExit()
+    {
+        try {
+            return Files.deleteIfExists(path);
+        } catch (IOException ex) {
+            Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally  {
+            return false;
+        }
+    }
+    
     public Path getPath()
     {
         return path;
@@ -102,6 +115,11 @@ public class FileObject
         return null;
     }
     
+    public ArrayList<FileObject> getChildrenList()
+    {
+        return new ArrayList<>(Arrays.asList(getChildren()));
+    }
+    
     public String getName()
     {
         if(path.getFileName() == null)
@@ -120,4 +138,5 @@ public class FileObject
         else
             return path.toString();
     }
+    
 }
