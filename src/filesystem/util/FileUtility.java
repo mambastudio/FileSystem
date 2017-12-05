@@ -91,4 +91,9 @@ public class FileUtility
             Logger.getLogger(FileUtility.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void initFileChooser()
+    {
+        
+    }
 }
