@@ -6,6 +6,7 @@
 package filesystem.util;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.FileChooser;
@@ -29,7 +30,16 @@ public class FileChooserManager
         return fileChooserMetaList.get(name).getFileChooser();
     }
     
+    public static SimpleObjectProperty<File> getBindingFileProperty(String name)
+    {
+        return fileChooserMetaList.get(name).lastKnownDirectoryProperty;
+    }
     
+    public static Path getPathDirectory(String name)
+    {
+        return fileChooserMetaList.get(name).getPathDirectory();
+    }
+        
     public static File showOpenDialog(String name)
     {
         return showOpenDialog(name, null);
@@ -71,6 +81,11 @@ public class FileChooserManager
         FileChooser getFileChooser()
         {
             return chooser;
+        }
+        
+        Path getPathDirectory()
+        {
+            return lastKnownDirectoryProperty.getValue().toPath();
         }
     }
 }
