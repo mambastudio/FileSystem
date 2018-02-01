@@ -1,11 +1,15 @@
+package filesystem;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package zipview;
+
 
 import filesystem.core.FileObject;
+import filesystem.fx.FileSystemTreeView;
+import filesystem.fx.icons.FileIconManager;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -13,20 +17,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeView;
+import javafx.scene.layout.StackPane;
 
 /**
  * FXML Controller class
  *
  * @author user
  */
-public class ZipFileViewerController implements Initializable {
+public class FileViewerController implements Initializable {
 
     /**
      * Initializes the controller class.
      */
     @FXML
-    TreeView zipFileView;
+    StackPane pane;
     @FXML
     Button open;
     @FXML
@@ -39,9 +43,13 @@ public class ZipFileViewerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        FileObject file = new FileObject("C:\\Users\\user\\Desktop\\Desktop.zip");
-        zipFileView.setRoot(new ZipTreeItem(file));
-        zipFileView.setCellFactory(p -> new ZipTreeCell());
+        FileIconManager.put("md", FileIconManager.class, "info16x16.png");
+        FileIconManager.put("xml", FileIconManager.class, "xml24x24.png");
+        
+        FileObject file = new FileObject();        
+        FileSystemTreeView fileView = new FileSystemTreeView();
+        fileView.setRootFile(file);        
+        pane.getChildren().add(fileView);
     }   
         
     

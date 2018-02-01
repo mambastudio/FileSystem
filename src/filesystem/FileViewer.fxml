@@ -6,11 +6,11 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="704.0" prefWidth="590.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zipview.ZipFileViewerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="704.0" prefWidth="590.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filesystem.FileViewerController">
    <children>
       <MenuBar>
         <menus>
@@ -21,7 +21,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <TreeView fx:id="zipFileView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="604.0" prefWidth="581.0" VBox.vgrow="ALWAYS" />
+      <StackPane fx:id="pane" VBox.vgrow="ALWAYS" />
       <HBox prefHeight="36.0" prefWidth="579.0" spacing="5.0">
          <children>
             <Button fx:id="open" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Open" />

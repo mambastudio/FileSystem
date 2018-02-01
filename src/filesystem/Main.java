@@ -5,24 +5,31 @@
  */
 package filesystem;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /**
  *
  * @author user
  */
-public class Main {
+public class Main extends Application {
+    public static void main(String... args)
+    {
+        launch(args);
+    }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {       
-        //ZipReader reader = new ZipReader("C:\\Users\\user\\Documents\\jd-gui-windows-1.4.0.zip");
-        //System.out.println(reader.info());
-        Path path1 = Paths.get("damba\\javafx\\Text.txt");
-        Path path2 = Paths.get("java\\javafx");
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("FileViewer.fxml"));
         
-        System.out.println(Paths.get(path2.toString(), path1.toString()));
+        Scene scene = new Scene(root);        
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        primaryStage.setOnCloseRequest(e -> {
+            System.exit(0);
+        });
     }
 }

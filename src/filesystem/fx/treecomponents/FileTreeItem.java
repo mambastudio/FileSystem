@@ -3,35 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package zipview;
+package filesystem.fx.treecomponents;
 
 import filesystem.core.FileObject;
+import filesystem.fx.icons.FileIconManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 
 /**
  *
  * @author user
  */
-public class ZipTreeItem extends TreeItem<FileObject>
-{
+public class FileTreeItem extends TreeItem<FileObject> {
     private boolean isFirstTimeChildren = true;
     private boolean isFirstTimeLeaf = true;
     private boolean isLeaf;
     
-    public ZipTreeItem(FileObject file)
+    public FileTreeItem(FileObject file)
     {
-        super(file);        
+        super(file, FileIconManager.getIcon(file));        
     }
-    
-    public ZipTreeItem(FileObject file, boolean expand)
+        
+    public FileTreeItem(FileObject file, boolean expand)
     {
-        super(file);
+        super(file, FileIconManager.getIcon(file));
         this.expandedProperty().set(expand);
     }
     
-    //
     @Override
     public ObservableList<TreeItem<FileObject>> getChildren() 
     {
@@ -61,7 +61,7 @@ public class ZipTreeItem extends TreeItem<FileObject>
         {
             ObservableList<TreeItem<FileObject>> children = FXCollections.observableArrayList();
             for(FileObject fileObject : fileObjects)            
-                children.add(new ZipTreeItem(fileObject));
+                children.add(new FileTreeItem(fileObject));
             return children;
         }
         return FXCollections.emptyObservableList();

@@ -5,6 +5,7 @@
  */
 package filesystem.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
@@ -34,6 +35,21 @@ public class FileObject
         this(Paths.get(path));
     }
     
+    public FileObject(File file)
+    {
+        this(file.toPath());
+    }
+    
+    public FileObject(URI uri)
+    {
+        this(new File(uri));
+    }
+    
+    public FileObject()
+    {
+        this(Paths.get(".").toAbsolutePath());
+    }
+    
     public FileObject(Path path)
     {
         if(path.toString().toLowerCase().endsWith(".zip") && !path.getFileSystem().toString().endsWith(".zip"))
@@ -51,7 +67,9 @@ public class FileObject
             }            
         }
         else
+        {            
             this.path = path;
+        }
     }
     
     public boolean isFileSystem()
@@ -86,9 +104,9 @@ public class FileObject
         } catch (IOException ex) {
             Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
         }
-        finally  {
-            return false;
-        }
+        
+        return false;
+       
     }
     
     public Path getPath()
@@ -137,6 +155,17 @@ public class FileObject
             return path.getFileSystem().toString();
         else
             return path.toString();
+    }
+    
+    public String getFileExtension()            
+    {
+        String fileName = getName();
+        int index = fileName.lastIndexOf(".");
+        
+        if (index > 0) 
+            return fileName.substring(index + 1); 
+        else 
+            return null;
     }
     
 }

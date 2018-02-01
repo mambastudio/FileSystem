@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package zipview;
+package filesystem.fx.treecomponents;
 
 import filesystem.core.FileObject;
 import javafx.scene.control.TreeCell;
@@ -12,9 +12,13 @@ import javafx.scene.control.TreeCell;
  *
  * @author user
  */
-public class ZipTreeCell extends TreeCell<FileObject>{
+public class FileTreeCell extends TreeCell<FileObject>{
     
-   
+    public FileTreeCell()
+    {
+        super();
+    }
+    
     @Override
     public void updateItem(FileObject file, boolean empty) 
     {
@@ -25,8 +29,9 @@ public class ZipTreeCell extends TreeCell<FileObject>{
             setGraphic(null);
         }
         else
-        {                        
-                setText(file.getName());
+        {     
+            setGraphic(getTreeItem().getGraphic());
+            setText(file.getName());
         }
     }
 }
