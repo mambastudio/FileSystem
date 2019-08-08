@@ -21,16 +21,25 @@ public class FileTreeItem extends TreeItem<FileObject> {
     private boolean isFirstTimeLeaf = true;
     private boolean isLeaf;
     
+    private String[] extensions = null;    
+    
     public FileTreeItem(FileObject file)
     {
-        super(file, FileIconManager.getIcon(file));        
+        this(file, FileIconManager.getIcon(file));         
     }
-        
-    public FileTreeItem(FileObject file, boolean expand)
+    
+    public FileTreeItem(FileObject file, String... extensions)
     {
-        super(file, FileIconManager.getIcon(file));
-        this.expandedProperty().set(expand);
+        this(file, FileIconManager.getIcon(file), extensions);         
     }
+    
+   
+    public FileTreeItem(FileObject file, ImageView view, String... extensions)
+    {
+        super(file, view);
+        this.extensions = extensions;
+    }
+    
     
     @Override
     public ObservableList<TreeItem<FileObject>> getChildren() 
@@ -38,9 +47,18 @@ public class FileTreeItem extends TreeItem<FileObject> {
 
         if (isFirstTimeChildren) {              
             isFirstTimeChildren = false;
-            super.getChildren().setAll(buildChildren(this));
+            ///if(!super.getChildren().isEmpty())
+                super.getChildren().setAll(buildChildren(this));
         }
         return super.getChildren();
+    }
+    
+    public void refresh()
+    {
+        isFirstTimeChildren = true;
+        isFirstTimeLeaf = true;
+        isLeaf = false;
+        getChildren();
     }
     
     @Override
@@ -55,15 +73,16 @@ public class FileTreeItem extends TreeItem<FileObject> {
     
     private ObservableList<TreeItem<FileObject>> buildChildren(TreeItem<FileObject> treeItem) 
     {
-        FileObject[] fileObjects = treeItem.getValue().getChildren();
-        
+        FileObject[] fileObjects = treeItem.getValue().getChildren(extensions);            
         if(fileObjects != null)
         {
             ObservableList<TreeItem<FileObject>> children = FXCollections.observableArrayList();
-            for(FileObject fileObject : fileObjects)            
-                children.add(new FileTreeItem(fileObject));
+            for(FileObject fileObject : fileObjects)           
+                    children.add(new FileTreeItem(fileObject, extensions));          
             return children;
         }
         return FXCollections.emptyObservableList();
     }
+    
+    
 }

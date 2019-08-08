@@ -31,7 +31,11 @@ public class FileTreeCell extends TreeCell<FileObject>{
         else
         {     
             setGraphic(getTreeItem().getGraphic());
-            setText(file.getName());
+            
+            if(file.isRoot())
+                setText(file.getRootName());
+            else
+                setText(file.getName());
         }
     }
 }

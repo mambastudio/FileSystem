@@ -6,7 +6,7 @@
 package fileobject;
 
 import filesystem.core.FileObject;
-import java.nio.file.Path;
+import java.io.File;
 
 /**
  *
@@ -15,9 +15,11 @@ import java.nio.file.Path;
 public class Main {
     public static void main(String... args)
     {
-        //FileObject file = new FileObject("C:\\Users\\user\\Desktop\\Desktop.zip");
-        FileObject file = new FileObject("C:\\Users\\user\\Desktop\\Desktop.zip");
-        Path path = file.getFileSystem().getPath("Depth1.zip");
-        FileObject inner = new FileObject(path);        
+        //FileObject file = new FileObject();
+       
+        FileObject file = FileObject.getSystemRootArray()[0];
+        
+        
+        System.out.println(file.getRootName());
     }
 }

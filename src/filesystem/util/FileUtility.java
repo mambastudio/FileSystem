@@ -5,6 +5,7 @@
  */
 package filesystem.util;
 
+import filesystem.core.FileObject;
 import static filesystem.util.FileUtility.FileOption.IN_TEMPORARY_DIR_DONT_DELETE;
 import static filesystem.util.FileUtility.FileOption.TEMPORARY;
 import static filesystem.util.FileUtility.FileOption.TEMPORARY_RANDOM;
@@ -29,26 +30,14 @@ public class FileUtility
     
     public static Path createFile(String prefix, String suffix, FileOption... options)
     {
-        if(options[0].equals(TEMPORARY_RANDOM))
-        {
-            try {
-                Path tempFile = Files.createTempFile(prefix, suffix);
-                tempFile.toFile().deleteOnExit();
-                return tempFile;
-            } catch (IOException ex) {
-                Logger.getLogger(FileUtility.class.getName()).log(Level.SEVERE, null, ex);
-            }            
-        }
-        else
-        {
-            Path path = Paths.get(prefix, suffix);
-            return createFile(path, options);
-        }
-        return null;
+        Path path = Paths.get(prefix, suffix);       
+        return createFile(path, options);
     }
     
     public static Path createFile(Path path, FileOption... options)
-    {
+    {        
+       if(Files.exists(path))
+            return path;
         try
         {           
             if(options.length == 0)
@@ -76,6 +65,24 @@ public class FileUtility
         }
         
         return null; 
+    }
+    
+    public static Path createDirectory(String directory)
+    {
+        Path path = Paths.get(directory);
+        if(Files.exists(path))
+            return path;
+        try {
+            return Files.createDirectory(path);
+        } catch (IOException ex) {
+            Logger.getLogger(FileUtility.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static FileObject createDirectoryFileObject(String directory)
+    {
+        return new FileObject(createDirectory(directory));
     }
         
     public static Path getTemporaryDirectory()
@@ -139,5 +146,10 @@ public class FileUtility
         } catch (IOException ex) {
             Logger.getLogger(FileUtility.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static FileObject[] getChildren(Path path)
+    {
+        return null;
     }
 }

@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package filesystem.core;
+package filesystem.fx.callback;
+
+import filesystem.core.FileObject;
 
 /**
  *
  * @author user
  */
-public interface OutputInterface 
-{
-    public void print(String key, String string);    
+public interface FileMonitorCallBack {
+    public void execute(FileObject parent, FileObject child);
 }
