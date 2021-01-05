@@ -5,7 +5,7 @@
  */
 package filesystem.fx.icons;
 
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import java.util.HashMap;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -5,7 +5,7 @@
  */
 package fileobject;
 
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import java.io.File;
 
 /**
@@ -17,9 +17,13 @@ public class Main {
     {
         //FileObject file = new FileObject();
        
-        FileObject file = FileObject.getSystemRootArray()[0];
+        FileObject file = new FileObject("C:\\Users\\user\\Desktop\\testasd");
         
         
-        System.out.println(file.getRootName());
+        System.out.println(file);
+        System.out.println(file.exists());
+        file.ifAbsentCreateFile();
+        System.out.println(file.exists());
+        file.rename("kubafu.joe");
     }
 }

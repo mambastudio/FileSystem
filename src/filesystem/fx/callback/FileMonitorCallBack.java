@@ -5,7 +5,7 @@
  */
 package filesystem.fx.callback;
 
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 
 /**
  *

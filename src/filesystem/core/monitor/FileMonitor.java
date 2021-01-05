@@ -6,7 +6,7 @@
 package filesystem.core.monitor;
 
 import filesystem.fx.callback.FileMonitorCallBack;
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;

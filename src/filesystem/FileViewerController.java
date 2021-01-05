@@ -7,13 +7,11 @@ package filesystem;
  */
 
 
-import filesystem.core.monitor.FileMonitor;
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import filesystem.fx.FileSystemTreeView;
 import filesystem.fx.icons.FileIconManager;
-import filesystem.fx.treecomponents.FileTreeItem;
-import filesystem.fx.treecomponents.FileTreeItemSearch;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,6 +41,8 @@ public class FileViewerController implements Initializable {
     @FXML
     TextField nameField;
     
+    FileSystemTreeView fileView;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
@@ -56,29 +56,29 @@ public class FileViewerController implements Initializable {
         FileIconManager.put("png", FileIconManager.class, "image20x20.png");
         FileIconManager.put("jpg", FileIconManager.class, "image20x20.png");
         
-        FileObject root = FileObject.getSystemRootArray()[0];
+        FileObject root = new FileObject("C:\\Users\\user\\Desktop\\Notes");
         System.out.println(root.getPath());
                 
-        FileSystemTreeView fileView = new FileSystemTreeView(root);          
+        fileView = new FileSystemTreeView(root);          
         pane.getChildren().add(fileView);
         
-        /*
-        FileMonitor monitor = new FileMonitor(root);
-        monitor.processEvents();
-        monitor.registerCreate((parent, child) -> {
-            FileTreeItem parentTreeItem = FileTreeItemSearch.search(fileView.getRootFileTreeItem(), parent);
-            parentTreeItem.refresh();
-        });        
-        monitor.registerDelete((parent, child) -> {
-            FileTreeItem parentTreeItem = FileTreeItemSearch.search(fileView.getRootFileTreeItem(), parent);
-            parentTreeItem.refresh();
-        });
-*/
+        fileView.monitorChange();
+
     }   
         
     
     public void close(ActionEvent e)
     {
         System.exit(0);
+    }
+    
+    public void createFolder(ActionEvent e)
+    {
+        fileView.createFolderInSelected(nameField.getText());
+    }
+    
+    public void createFile(ActionEvent e)
+    {
+        fileView.createFileInSelected(nameField.getText());
     }
 }

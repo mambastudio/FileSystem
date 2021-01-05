@@ -6,7 +6,7 @@
 package general;
 
 import filesystem.core.monitor.FileMonitor;
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import java.io.IOException;
 
 /**

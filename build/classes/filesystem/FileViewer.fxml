@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="704.0" prefWidth="590.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filesystem.FileViewerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="704.0" prefWidth="590.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filesystem.FileViewerController">
    <children>
       <MenuBar>
         <menus>
@@ -25,8 +25,8 @@
       <HBox prefHeight="36.0" prefWidth="579.0" spacing="5.0">
          <children>
             <Button fx:id="open" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Open" />
-            <Button fx:id="createFolder" mnemonicParsing="false" text="Create Folder" />
-            <Button fx:id="createFile" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Create File" />
+            <Button fx:id="createFolder" mnemonicParsing="false" onAction="#createFolder" text="Create Folder" />
+            <Button fx:id="createFile" mnemonicParsing="false" onAction="#createFile" prefHeight="25.0" prefWidth="89.0" text="Create File" />
             <TextField fx:id="nameField" prefHeight="25.0" prefWidth="289.0" HBox.hgrow="ALWAYS" />
          </children>
          <padding>

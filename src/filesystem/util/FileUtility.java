@@ -5,7 +5,7 @@
  */
 package filesystem.util;
 
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import static filesystem.util.FileUtility.FileOption.IN_TEMPORARY_DIR_DONT_DELETE;
 import static filesystem.util.FileUtility.FileOption.TEMPORARY;
 import static filesystem.util.FileUtility.FileOption.TEMPORARY_RANDOM;

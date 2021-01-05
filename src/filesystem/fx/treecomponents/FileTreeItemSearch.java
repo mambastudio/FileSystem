@@ -5,7 +5,7 @@
  */
 package filesystem.fx.treecomponents;
 
-import filesystem.core.FileObject;
+import filesystem.core.file.FileObject;
 import javafx.scene.control.TreeItem;
 
 /**

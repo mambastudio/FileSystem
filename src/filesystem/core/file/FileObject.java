@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package filesystem.core;
+package filesystem.core.file;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -14,9 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,6 +52,7 @@ public class FileObject
     
     public FileObject(Path path)
     {
+        //how do I open zip and jar files
         /*if(path.toString().toLowerCase().endsWith(".zip") && !path.getFileSystem().toString().endsWith(".zip"))
         {
             try 
@@ -64,12 +67,13 @@ public class FileObject
                 Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
             }            
         }
-else */
+        else */
         {            
             this.path = path;
         }
     }
     
+    //get root folders C:, D:, E:, etc
     public static FileObject[] getSystemRootArray()
     {
         File[] fileRoots = File.listRoots();
@@ -83,6 +87,7 @@ else */
         return fileobjectRoots;
     }
     
+    //get root folders C:, D:, E:, etc    
     public static ArrayList<FileObject> getSystemRootList()
     {
         ArrayList<FileObject> rootList = new ArrayList<>();
@@ -91,11 +96,57 @@ else */
         return rootList;
     }
     
+    //is C:, D:, E:, etc
     public boolean isFileSystem()
     {
         return (path.getParent() == null);
     }
     
+    public boolean ifAbsentCreateDirectorate()
+    {
+        if(absent())
+            try {
+                Files.createDirectory(Paths.get(path.toString()));
+                return exists();
+            } catch (IOException ex) {
+                Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        return exists();
+    }
+    
+    public boolean ifAbsentCreateFile()
+    {
+        if(absent())
+            try {
+                Files.createFile(Paths.get(path.toString()));
+                return exists();
+            } catch (IOException ex) {
+                Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        return exists();
+    }
+    
+    public boolean delete()
+    {       
+        try {
+            return  Files.deleteIfExists(path);
+        } catch (IOException ex) {
+            Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return false;        
+    }
+    
+    public boolean absent()
+    {
+        return !exists();
+    }
+    
+    public boolean exists()
+    {
+        return Files.exists(path);
+    }
+    
+    //fix me: (same as isFileSystem())
     public boolean isRoot()
     {
         return (path.getParent() == null);
@@ -157,7 +208,7 @@ else */
     {
         if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
         {
-            File directory = getJavaFile();
+            File directory = getFile();
             File[] files = directory.listFiles();
             FileObject[] fileObjects = new FileObject[files.length];
             
@@ -174,22 +225,24 @@ else */
     {        
         if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
         {
-            File directory = getJavaFile();
-            File[] files = null;
+            File directory = getFile();
+            File[] files;
             if(extensions.length != 0)        
                 files = directory.listFiles(file -> {
-                FileObject fo = new FileObject(file);
-                if(fo.isDirectory()) return true;
-                boolean accept = false;                
-                for(String extension : extensions)
-                    accept |= fo.hasFileExtension(extension);
-                
-                return accept;
-            }); 
+                    FileObject fo = new FileObject(file);
+                    if(fo.isDirectory()) return true;
+                    boolean accept = false;                
+                    for(String extension : extensions)
+                        accept |= fo.hasFileExtension(extension);
+
+                    return accept;
+            });  
             else
                 files = directory.listFiles();
             
             if(files.length == 0) return null;
+            
+            Arrays.sort(files, Comparator.comparingLong(File::lastModified));
             
             FileObject[] fileObjects = new FileObject[files.length];
             
@@ -212,6 +265,29 @@ else */
             return path.normalize().getFileName().toString().replace("/", "");
     }
     
+    public String getNameWithoutExtension()
+    {
+        if(!hasExtension())
+            return getName();
+        else
+        {
+            String fileName = getName();
+            int index = fileName.lastIndexOf(".");
+            return fileName.substring(0, index);
+        }
+    }
+    
+    public boolean rename(String name)
+    {
+        try {
+            path = Files.move(path, path.resolveSibling(name), REPLACE_EXISTING);
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
     public String getPathName()
     {
         if(path.getFileName() == null)
@@ -231,12 +307,19 @@ else */
             return null;
     }
     
+    public boolean hasExtension()
+    {
+        if(isDirectory())
+            return false;
+        else return getFileExtension() != null;
+    }
+    
     public boolean hasFileExtension(String extension)
     {
         return (getFileExtension() != null) && (getFileExtension().contains(extension));
     }
     
-    public File getJavaFile()
+    public File getFile()
     {
         return path.toFile();
     }
@@ -256,5 +339,11 @@ else */
     public boolean equals(FileObject file)
     {
         return this.getPath().equals(file.getPath());
+    }
+    
+    @Override
+    public String toString()
+    {
+        return path.toString();
     }
 }
