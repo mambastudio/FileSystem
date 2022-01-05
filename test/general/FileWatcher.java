@@ -18,7 +18,8 @@ public class FileWatcher {
     {
         FileObject root = new FileObject("C:\\Users\\user\\Desktop\\TextEditor");
         
-        FileMonitor monitor = new FileMonitor(root);        
+        FileMonitor monitor = new FileMonitor();        
+        monitor.setMonitor(root);
         monitor.processEvents();
         monitor.registerModify((file, child) -> {
             System.out.println("File modified: " +child.getName());

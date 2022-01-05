@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class FileUtilityTest {
     public static void main(String... args)
     {
-        test2();
+        test1();
     }
     
     public static void test1()

@@ -8,10 +8,10 @@ package filesystem;
 
 
 import filesystem.core.file.FileObject;
-import filesystem.fx.FileSystemTreeView;
 import filesystem.fx.icons.FileIconManager;
+import filesystem.treeview.FileTreeCellFactory;
+import filesystem.treeview.FileTreeView;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +41,7 @@ public class FileViewerController implements Initializable {
     @FXML
     TextField nameField;
     
-    FileSystemTreeView fileView;
+    FileTreeView fileView;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -59,7 +59,11 @@ public class FileViewerController implements Initializable {
         FileObject root = new FileObject("C:\\Users\\user\\Desktop\\Notes");
         System.out.println(root.getPath());
                 
-        fileView = new FileSystemTreeView(root);          
+        fileView = new FileTreeView(root);   
+        fileView.setTreeCellFactory(new FileTreeCellFactory());
+        fileView.monitorChange();
+        fileView.setEditable(true);
+        
         pane.getChildren().add(fileView);
         
         fileView.monitorChange();

@@ -5,7 +5,6 @@
  */
 package filesystem.core.monitor;
 
-import filesystem.fx.callback.FileMonitorCallBack;
 import filesystem.core.file.FileObject;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -30,16 +29,24 @@ import java.util.logging.Logger;
  */
 public class FileMonitor 
 {
-    private final WatchService watcher;
-    private final Map<WatchKey, FileObject> keys;
-    private boolean exit = false;
-    
+    private WatchService watcher;
+    private final Map<WatchKey, FileObject> keys = new HashMap<>();
     private FileMonitorCallBack modify = null, create = null, delete = null;
     
-    public FileMonitor(FileObject root)
+    public FileMonitor()
     {
-        this.watcher = root.getNewWatchService();
-        this.keys = new HashMap<>();
+       
+    }
+    
+    public final void setMonitor(FileObject root)
+    {        
+        this.watcher = root.getNewWatchService(); 
+        //close existing key if any
+        keys.keySet().forEach(key -> {
+            key.cancel();
+        });
+        keys.clear();
+        //register new keys
         this.walkAndRegisterDirectories(root);
     }
     
@@ -65,15 +72,16 @@ public class FileMonitor
         }
     }
     
-    public void exit()
-    {
-        exit = true;
-    }
-    
     public void processEvents()
-    {
+    {        
+        /*
+        keys.keySet().forEach(key -> {
+            key.cancel();
+        });
+        keys.clear();
+        */        
         Thread thread = new Thread(()->{
-            while(exit != true)
+            while(true)
             {
                 // wait for key to be signalled
                 WatchKey key;
@@ -95,7 +103,7 @@ public class FileMonitor
                     // Context for directory entry event is the file name of entry
                     @SuppressWarnings("unchecked")
                     Path name = ((WatchEvent<Path>)event).context();
-                    Path child = dir.resolve(name);
+                    Path child = dir.resolve(name);                   
                     FileObject childFile = new FileObject(child);
                     // do something useful
                     // print out event
@@ -134,7 +142,7 @@ public class FileMonitor
                         break;
                     }
                 }
-            }
+            }            
         });
         thread.start();
     }

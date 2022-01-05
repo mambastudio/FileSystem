@@ -7,6 +7,8 @@ package fileobject;
 
 import filesystem.core.file.FileObject;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -17,13 +19,11 @@ public class Main {
     {
         //FileObject file = new FileObject();
        
-        FileObject file = new FileObject("C:\\Users\\user\\Desktop\\testasd");
+        FileObject file = new FileObject("C:\\Users\\user\\Desktop");
+        ArrayList<FileObject> fileList = new ArrayList(Arrays.asList(file.getChildren(false, ".pdf")));
+        fileList.forEach(fObj -> {
+            System.out.println(fObj.getPathName());
+        });
         
-        
-        System.out.println(file);
-        System.out.println(file.exists());
-        file.ifAbsentCreateFile();
-        System.out.println(file.exists());
-        file.rename("kubafu.joe");
     }
 }

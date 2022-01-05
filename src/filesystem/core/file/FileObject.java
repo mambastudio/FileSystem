@@ -5,6 +5,9 @@
  */
 package filesystem.core.file;
 
+import static filesystem.core.file.FileObject.ExploreType.FILE;
+import static filesystem.core.file.FileObject.ExploreType.FOLDER;
+import static filesystem.core.file.FileObject.ExploreType.FOLDER_NOFILE;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.nio.file.WatchService;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,6 +32,8 @@ import java.util.logging.Logger;
  */
 public class FileObject 
 {
+    public enum ExploreType{FILE, FOLDER, FOLDER_NOFILE};
+    
     private Path path = null;
     
     public FileObject(String path)
@@ -80,7 +86,7 @@ public class FileObject
         FileObject[] fileobjectRoots = new FileObject[fileRoots.length];
         for(int i = 0; i<fileRoots.length; i++)
         {
-            FileObject f = new FileObject(fileRoots[i]);
+            FileObject f = new FileObject(fileRoots[i]);           
             fileobjectRoots[i] = f;
         }
         
@@ -146,6 +152,19 @@ public class FileObject
         return Files.exists(path);
     }
     
+    public boolean isReadable()
+    {
+        if(exists())        
+            return Files.isReadable(getFile().toPath());
+        else
+            return false;
+    }
+    
+    public boolean isHidden()
+    {
+        return this.getFile().isHidden();
+    }
+    
     //fix me: (same as isFileSystem())
     public boolean isRoot()
     {
@@ -204,6 +223,16 @@ public class FileObject
         return path;
     }
     
+    public boolean isSameFile(FileObject fileObject)
+    {
+        try {
+            return Files.isSameFile(path, fileObject.getPath());
+        } catch (IOException ex) {
+            Logger.getLogger(FileObject.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return false;
+    }
+    
     public FileObject[] getChildren()
     {
         if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
@@ -219,6 +248,59 @@ public class FileObject
         }
         
         return null;
+    }
+    
+    public FileObject[] getChildren(boolean includeHidden, ExploreType exploreType, String... extensions)
+    {
+        File[] files = null;
+        if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS) && (exploreType == FILE || exploreType == FOLDER))
+        {
+            File directory = getFile();            
+            if(extensions != null && extensions.length != 0)        
+                files = directory.listFiles(file -> {
+                    FileObject fo = new FileObject(file);
+                    if(fo.isDirectory()) return true;
+                    boolean accept = false;                
+                    for(String extension : extensions)
+                        accept |= fo.hasFileExtension(extension);
+
+                    return accept;
+            });  
+            else
+                files = directory.listFiles();          
+            //Arrays.sort(files, Comparator.comparingLong(File::lastModified));
+        }
+        else if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS) && exploreType == FOLDER_NOFILE)
+        {
+            File directory = getFile();
+            files = directory.listFiles(file -> {
+                    FileObject fo = new FileObject(file);
+                return fo.isDirectory();
+            });  
+                        
+            //Arrays.sort(files, Comparator.comparingLong(File::lastModified));          
+        }
+        
+        if(files != null)
+        {
+            ArrayList<FileObject> fileObjectList = new ArrayList<>();            
+            for(File file : files)
+            {
+                FileObject fileObject = new FileObject(file);
+                if(!fileObject.isHidden())
+                    fileObjectList.add(fileObject);
+                if(includeHidden)
+                    fileObjectList.add(fileObject);
+            }            
+            return fileObjectList.toArray(new FileObject[fileObjectList.size()]);
+        }
+        else
+            return null;
+    }
+    
+    public FileObject[] getChildren(boolean includeHidden, String... extensions)
+    {
+        return getChildren(includeHidden, FILE, extensions);
     }
     
     public FileObject[] getChildren(String... extensions)
@@ -302,7 +384,7 @@ public class FileObject
         int index = fileName.lastIndexOf(".");
         
         if (index > 0) 
-            return fileName.substring(index + 1); 
+            return fileName.substring(index); 
         else 
             return null;
     }
@@ -316,12 +398,46 @@ public class FileObject
     
     public boolean hasFileExtension(String extension)
     {
-        return (getFileExtension() != null) && (getFileExtension().contains(extension));
+        return (getFileExtension() != null) && (getFileExtension().equals(extension));
     }
     
     public File getFile()
     {
         return path.toFile();
+    }
+    
+    public String getLastModified()
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        return sdf.format(getFile().lastModified());
+    }
+    
+    public String getSizeString()
+    {
+        // size of a file (in bytes)
+        long bytes = getFile().length();
+
+        float kilobytes     = (bytes / 1024f);
+        float megabytes     = (kilobytes / 1024f);
+        float gigabytes     = (megabytes / 1024f);
+        float terabytes     = (gigabytes / 1024f);
+        float petabytes     = (terabytes / 1024f);
+        float exabytes      = (petabytes / 1024f);
+        float zettabytes    = (exabytes / 1024f);
+        float yottabytes    = (zettabytes / 1024f);
+                
+        if(bytes < 1000)
+            return String.format("%1$3.3g  b", (float)bytes);
+        else if(kilobytes < 1000)
+            return String.format("%1$3.3g kb", kilobytes);
+        else if(megabytes < 1000)
+            return String.format("%1$3.3g mb", megabytes);
+        else if(gigabytes < 1000)
+            return String.format("%1$3.3g gb", gigabytes);
+        else if(terabytes < 1000)
+            return String.format("%10.1f tb", terabytes);
+        else 
+            return " large";
     }
     
     public void openNative()
