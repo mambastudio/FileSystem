@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author user
  */
 public class FileNavigateBidirectional {
-    private final ArrayList<FileObject> list;
+    private final ArrayList<TableDataInfo> list;
     private int index = -1;
     
     public FileNavigateBidirectional()
@@ -32,10 +32,15 @@ public class FileNavigateBidirectional {
     {        
         index++;
         list.subList(index, list.size()).clear();
-        list.add(file);        
+        list.add(new TableDataInfo(file));        
     }
     
-    public FileObject goBack()
+    public TableDataInfo getCurrent()
+    {
+        return list.get(index);
+    }
+    
+    public TableDataInfo goBack()
     {
         if(canGoBackward())
         {
@@ -45,7 +50,7 @@ public class FileNavigateBidirectional {
         return null;
     }
     
-    public FileObject goForward()
+    public TableDataInfo goForward()
     { 
         if(canGoForward())
         {
@@ -69,5 +74,33 @@ public class FileNavigateBidirectional {
     private boolean isWithinRange(int index)
     {
         return index >-1 && index < list.size();
+    }
+    
+    public static class TableDataInfo
+    {
+        private final FileObject file;
+        private int tableIndex = -1;
+        
+        TableDataInfo(FileObject file)
+        {
+            this.file = file;
+            
+        }
+        
+        public FileObject getFile()
+        {
+            return file;
+        }
+        
+        public int getTableIndex()
+        {
+            return tableIndex;
+        }
+        
+        public void setTableIndex(int tableIndex)
+        {
+            this.tableIndex = tableIndex;
+        }
+        
     }
 }

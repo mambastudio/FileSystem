@@ -13,11 +13,13 @@ import static filesystem.core.file.FileObject.ExploreType.FILE;
 import static filesystem.core.file.FileObject.ExploreType.FOLDER;
 import static filesystem.core.file.FileObject.ExploreType.FOLDER_NOFILE;
 import filesystem.core.os.SystemOS;
+import filesystem.explorer.FileNavigateBidirectional.TableDataInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -29,8 +31,11 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -38,6 +43,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -89,6 +95,8 @@ public class FileExplorer extends VBox{
     private Consumer<MouseEvent> tableFileClick;
     
     private FileAccessory fileAccessory = null;
+    
+    private double vScrollIndex = 0;
     
     /**
      * Specifies the extension filters used in the displayed file dialog.
@@ -202,9 +210,9 @@ public class FileExplorer extends VBox{
         
         systemListView.getItems().addAll(FileObject.getSystemRootList());
         systemListView.setCellFactory(new FileSystemListCellFactory());
-        systemListView.getSelectionModel().selectedItemProperty().addListener((obs, oV, nV)->{
-            initTable(nV);
+        systemListView.getSelectionModel().selectedItemProperty().addListener((obs, oV, nV)->{           
             fileNavigate.reset(nV);
+            initTable(nV);
             FileObject fileObject = systemListView.getSelectionModel().getSelectedItem();
             folderProperty.set(fileObject);
             fileProperty.set(null);
@@ -219,17 +227,17 @@ public class FileExplorer extends VBox{
                 folderProperty.set(fileObject);
                 fileProperty.set(null);
                 if(fileObject.isDirectory())
-                {
-                    initTable(fileObject);
+                {                    
                     fileNavigate.reset(fileObject);
+                    initTable(fileObject);
                 }
             }
         });
         
         favoritesListView.setCellFactory(new FileFavoritesListCellFactory());
-        favoritesListView.getSelectionModel().selectedItemProperty().addListener((obs, oV, nV)->{
-            initTable(nV);
+        favoritesListView.getSelectionModel().selectedItemProperty().addListener((obs, oV, nV)->{            
             fileNavigate.reset(nV);
+            initTable(nV);
             FileObject fileObject = favoritesListView.getSelectionModel().getSelectedItem();
             folderProperty.set(fileObject);
             fileProperty.set(null);
@@ -244,9 +252,9 @@ public class FileExplorer extends VBox{
                 folderProperty.set(fileObject);
                 fileProperty.set(null);
                 if(fileObject.isDirectory())
-                {
-                    initTable(fileObject);
+                {                    
                     fileNavigate.reset(fileObject);
+                    initTable(fileObject);
                 }
             }
         });
@@ -321,8 +329,11 @@ public class FileExplorer extends VBox{
             {
                 if(folderProperty.get()!= null & fileProperty.get() == null)
                 {                    
-                    initTable(folderProperty.get());
-                    fileNavigate.addFileObject(folderProperty.get());
+                    fileNavigate. //set current scroll first
+                            getCurrent().
+                            setTableIndex(fileTableView.getSelectionModel().getSelectedIndex());
+                    fileNavigate.addFileObject(folderProperty.get()); 
+                    initTable(folderProperty.get());                    
                 }
                 
             }
@@ -364,7 +375,8 @@ public class FileExplorer extends VBox{
         {
             fileNameAndTypeGridPane.setVisible(false);
             fileNameAndTypeGridPane.setManaged(false);
-        }
+        }        
+        
     }
     
     public ExploreType getExploreType()
@@ -452,32 +464,30 @@ public class FileExplorer extends VBox{
     
     public void goForward(ActionEvent e)
     {
-        FileObject fileObject = fileNavigate.goForward();
-        if(fileObject != null)
+        TableDataInfo fileInfo = fileNavigate.goForward();
+        if(fileInfo != null)
         {
-            initTable(fileObject);
-            folderProperty.set(fileObject);
+            initTable(fileInfo.getFile());
+            folderProperty.set(fileInfo.getFile());
             fileProperty.set(null);
+            fileTableView.scrollTo(fileInfo.getTableIndex());
+            fileTableView.getSelectionModel().select(fileInfo.getTableIndex()); //make selection to this
         }
+        fileTableView.requestFocus(); //focus on table even if the event is invoked by a button
     }
     
     public void goBackward(ActionEvent e)
     {
-        FileObject fileObject = fileNavigate.goBack();
-        if(fileObject != null)
+        TableDataInfo fileInfo = fileNavigate.goBack();
+        if(fileInfo != null)
         {
-            initTable(fileObject);
-            folderProperty.set(fileObject);        
+            initTable(fileInfo.getFile());
+            folderProperty.set(fileInfo.getFile());        
             fileProperty.set(null);
+            fileTableView.scrollTo(fileInfo.getTableIndex());
+            fileTableView.getSelectionModel().select(fileInfo.getTableIndex()); //make selection to this            
         }
-    }
-    
-    private void navigateButtonUpdate()
-    {
-        if(fileNavigate.canGoBackward())
-        {
-            
-        }
+        fileTableView.requestFocus(); //focus on table even if the event is invoked by a button
     }
     
     public FileObject getSelectedFile()

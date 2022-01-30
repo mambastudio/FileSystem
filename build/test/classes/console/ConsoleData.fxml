@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="591.0" prefWidth="632.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="console.ConsoleDataController">
+   <children>
+      <Label text="Time">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Separator prefWidth="200.0" />
+      <TextArea fx:id="timeConsole" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS">
+         <font>
+            <Font name="Consolas" size="12.0" />
+         </font></TextArea>
+      <Label text="Performance">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Separator prefWidth="200.0" />
+      <TextArea fx:id="performanceConsole" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="247.0" prefWidth="632.0" wrapText="true" VBox.vgrow="ALWAYS">
+         <font>
+            <Font name="Consolas" size="12.0" />
+         </font></TextArea>
+   </children>
+</VBox>
